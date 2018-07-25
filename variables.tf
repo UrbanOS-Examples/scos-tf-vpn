@@ -3,6 +3,11 @@ variable "ami_id" {
   default     = "ami-6d163708"
 }
 
+variable "sandbox" {
+  description = "Behave as if we are running in sandbox (as opposed to prod)"
+  default = true
+}
+
 variable "public_subnet_id" {
   description = "Public subnet for VPN server"
 }
