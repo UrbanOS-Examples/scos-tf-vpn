@@ -1,3 +1,8 @@
+variable "ami_id" {
+  description = "AMI Id for the instance. Defaults to OpenVPN Access Server 'Bring your own license' version."
+  default     = "ami-6d163708"
+}
+
 variable "public_subnet_id" {
   description = "Public subnet for VPN server"
 }

@@ -12,7 +12,7 @@ data "template_file" "openvpn_init" {
 }
 
 resource "aws_instance" "openvpn_instance" {
-  ami                    = "ami-6d163708"
+  ami                    = "${var.ami_id}"
   instance_type          = "t2.micro"
   key_name               = "${var.key_name}"
   subnet_id              = "${var.public_subnet_id}"
@@ -28,7 +28,7 @@ resource "aws_instance" "openvpn_instance" {
   user_data = "${data.template_file.openvpn_init.rendered}"
 
   tags {
-    Name = "OpenVPN"
+    Name      = "OpenVPN"
     Workspace = "${terraform.workspace}"
   }
 
