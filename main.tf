@@ -35,30 +35,8 @@ locals {
   workspace          = "${terraform.workspace}"
 }
 
-resource "aws_instance" "openvpn_instance_sandbox" {
-  count                  = "${var.sandbox ? 1 : 0}"
-  ami                    = "${local.ami_id}"
-  instance_type          = "${local.instance_type}"
-  key_name               = "${local.key_name}"
-  subnet_id              = "${local.subnet_id}"
-  vpc_security_group_ids = ["${local.security_group_ids}"]
-
-  lifecycle = {
-    prevent_destroy = false
-  }
-
-  user_data = "${local.user_data}"
-
-  tags {
-    Name      = "${local.name}"
-    Workspace = "${local.workspace}"
-  }
-
-  depends_on = ["aws_eip.openvpn_eip", "aws_security_group.openvpn"]
-}
-
 resource "aws_instance" "openvpn_instance" {
-  count                  = "${var.sandbox ? 0 : 1}"
+  count                  = "1"
   ami                    = "${local.ami_id}"
   instance_type          = "${local.instance_type}"
   key_name               = "${local.key_name}"
@@ -66,6 +44,7 @@ resource "aws_instance" "openvpn_instance" {
   vpc_security_group_ids = ["${local.security_group_ids}"]
 
   lifecycle = {
+    ignore_changes = ["key_name"]
     prevent_destroy = true
   }
 
