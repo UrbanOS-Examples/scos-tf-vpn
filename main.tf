@@ -43,7 +43,7 @@ resource "aws_instance" "openvpn_instance" {
   subnet_id              = "${local.subnet_id}"
   vpc_security_group_ids = ["${local.security_group_ids}"]
 
-  lifecycle = {
+  lifecycle {
     ignore_changes = ["key_name"]
     prevent_destroy = true
   }
