@@ -1,3 +1,6 @@
+#!/bin/bash
+
+cat <<EOF > /etc/network/interfaces.d/eth1.cfg
 auto eth1
 iface eth1 inet dhcp
 EOF
