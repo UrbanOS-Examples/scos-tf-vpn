@@ -44,7 +44,7 @@ resource "aws_instance" "openvpn_instance" {
   vpc_security_group_ids = ["${local.security_group_ids}"]
 
   lifecycle {
-    ignore_changes = ["key_name"]
+    ignore_changes = ["key_name", "user_data", "ami"]
     prevent_destroy = true
   }
 
