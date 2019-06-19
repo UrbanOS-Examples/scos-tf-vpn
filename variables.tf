@@ -1,6 +1,6 @@
 variable "ami_id" {
   description = "AMI Id for the instance. Defaults to OpenVPN Access Server 'Bring your own license' version."
-  default     = "ami-6d163708"
+  default     = "ami-0a5aef046a3a6e7bf"
 }
 
 variable "sandbox" {
