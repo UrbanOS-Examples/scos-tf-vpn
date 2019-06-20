@@ -1,11 +1,12 @@
 #!/bin/bash
 
-cat <<EOF > /etc/network/interfaces.d/eth1.cfg
+{* This has been replaces by netplan(5) in the new AMI and does not seem to be needed. Left for visibility. *}
+{* cat <<EOF > /etc/network/interfaces.d/eth1.cfg
 auto eth1
 iface eth1 inet dhcp
 EOF
 
-ifup eth1
+ifup eth1 *}
 
 # Swap ports so that web traffic listens on 443 to eliminate port needed in URL
 sed -i 's/"cs\.https\.port"\: "943",/"cs\.https\.port"\: "443",/' /usr/local/openvpn_as/etc/config.json
