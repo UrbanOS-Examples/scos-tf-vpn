@@ -22,20 +22,28 @@ vpn.alm.sandbox.internal.smartcolumbusos.com | openvpn | openvpn_admin_password
 Not all pieces of configuration are codified for the OpenVPN server yet. Here is the current list of things you need to do after using this to create a new one:
 - Set up let's encrypt/certbot for the OpenVPN cert to make it not self signed
   ```#fetch certbot to use lets encrypt
-  #generate certificate
   wget https://dl.eff.org/certbot-auto
   chmod +x certbot-auto
+
+  #generate certificate
   ./certbot-auto certonly --agree-tos --email scos_alm_account@pillartechnology.com --standalone -d ${vpn_host} -n
+
+  #setup cronjob to renew cert
   sudo echo "0 0,12 * * * python -c 'import random; import time; time.sleep(random.random() * 3600)' && /home/openvpnas/certbot-auto renew" >> ~/cert-renew.cron
   crontab ~/cert-renew.cron
+
   cd /usr/local/openvpn_as/etc/web-ssl
-  mv ca.crt ca.crt.old
+
+  #backup old certs
   sudo mv ca.crt ca.crt.old
   sudo mv server.crt server.crt.old
   sudo mv server.key server.key.old
+
+  #symlink certs from letsencrypt
   sudo ln -s /etc/letsencrypt/live/${vpn_host}/fullchain.pem ca.crt
   sudo ln -s /etc/letsencrypt/live/${vpn_host}/privkey.pem server.key
   sudo ln -s /etc/letsencrypt/live/${vpn_host}/cert.pem server.crt
+
   sudo service openvpnas restart
 - Add extra routes to the server so users can access dev/staging/prod or dynamic sandbox environments
   - In admin UI, go to VPN settings and enter the following in the "Additional Routes" section (may vary per version). This will make it so VPN users can route between the different VPCs. NOTE: don't add the trailing comments (stuff behind the #) that are provided below
