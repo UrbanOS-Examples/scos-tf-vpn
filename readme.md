@@ -55,15 +55,15 @@ Not all pieces of configuration are codified for the OpenVPN server yet. Here is
       - 10.0.0.0/8 # any possible dynamic sandbox VPCs
       
 ### LDAP Setup
-From the openvpn web console, navigate to Authentication -> LDAP and fill out the following fields as shown:
+From the openvpn web console, navigate to Authentication -> LDAP and fill out the following fields as shown. Note that the sandbox DC is only needed in sandbox:
 
 Field | Value
 --- | ---
 Host | `iam-master.alm(.sandbox).internal.smartcolumbusos.com`
-Bind DN | `UID=binduser,CN=users,CN=accounts,DC=(alm/sandbox),DC=internal,DC=smartcolumbusos,DC=com`
+Bind DN | `UID=binduser,CN=users,CN=accounts,(DC=sandbox),DC=internal,DC=smartcolumbusos,DC=com`
 Password | Find in secrets manager
-Base DN | `CN=users,CN=accounts,DC=(alm/sandbox),DC=internal,DC=smartcolumbusos,DC=com`
+Base DN | `CN=users,CN=accounts,(DC=sandbox),DC=internal,DC=smartcolumbusos,DC=com`
 Username Attribute | `uid`
-Additional LDAP Requirement | `memberOf=cn=vpnusers,cn=groups,cn=accounts,dc=(alm/sandbox),dc=internal,dc=smartcolumbusos,dc=com`
+Additional LDAP Requirement | `memberOf=cn=vpnusers,cn=groups,cn=accounts,(dc=sandbox),dc=internal,dc=smartcolumbusos,dc=com`
 
 The *Additional LDAP Requirement* field controls what extra properties users need to be able to use the VPN. In this case a group called `vpnusers`.
