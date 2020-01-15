@@ -90,13 +90,6 @@ resource "aws_security_group" "openvpn" {
   }
 
   ingress {
-    protocol    = "tcp"
-    from_port   = 943
-    to_port     = 943
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
     protocol    = "udp"
     from_port   = 1194
     to_port     = 1194
