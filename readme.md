@@ -67,3 +67,22 @@ Username Attribute | `uid`
 Additional LDAP Requirement | `memberOf=cn=vpnusers,cn=groups,cn=accounts,(dc=sandbox),dc=internal,dc=smartcolumbusos,dc=com`
 
 The *Additional LDAP Requirement* field controls what extra properties users need to be able to use the VPN. In this case a group called `vpnusers`.
+
+### MFA Setup
+#### Preparation steps
+Since MFA is not enforced for the default `openvpn` user, you have to make another user admin and then delete/disable the `openvpn` user.
+- The user `openvpn-admin` is already created in LDAP, but if they are somehow lost, add them back in using the LDAP settings above. Their credentials can be found in secrets manager under the entry `openvpn_admin_credentials`
+- Login to the VPN admin console (vpn host + "/admin") with the current `openvpn` credentials, and add a user under the "User Permissions" page called `openvpn-admin` who has the "Admin" box checked then click the "Save Settings" button and restart the server if prompted at the top of the page.
+- Verify that you can login to the admin console with the `openvpn-admin` user.
+- Follow the directions for [disabling the `openvpn` user](https://openvpn.net/vpn-server-resources/recommendations-to-improve-security-after-installation/#secure-the-openvpn-administrative-user-account). If you ever need to re-enabled them follow the steps for [re-enabling the `openvpn` user](https://openvpn.net/vpn-server-resources/troubleshooting-authentication-related-problems/#Reset_default_openvpn_account_administrative_access). Ideally, you should set their password to the secrets manager entry for `openvpn_admin_password`.
+
+#### Enabling MFA
+Now you can enable MFA. Please do make sure you've notified people that you are doing this if there are any concerns.
+- Login to the VPN admin console (vpn host + "/admin") as the `openvpn-admin` user and go to the "Client Settings" page
+- Click the "On" button near the text `Require that users provide a Google Authenticator one-time password for every VPN login` if it is not already on.
+- Click the "Save Settings" button and restart the server if prompted at the top of the page.
+
+#### Configuring MFA per user
+Directions for a user to setup MFA (including the `openvpn-admin` user) can be found on [a wiki page](https://github.com/SmartColumbusOS/scosopedia/wiki/Setup-OpenVPN-2FA-for-your-user).
+
+Otherwise, when you do set up the `openvpn-admin` user's MFA, please do make sure at least 2 people have it setup in case of emergency.
