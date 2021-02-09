@@ -1,13 +1,13 @@
 data "template_file" "openvpn_init" {
-  template = "${file("${path.module}/templates/openvpn_init.tpl")}"
+  template = file("${path.module}/templates/openvpn_init.tpl")
 
-  vars {
-    admin_user      = "${var.admin_user}"
-    admin_password  = "${var.admin_password}"
-    local_auth      = "${var.local_auth}"
-    reroute_dns     = "${var.reroute_dns}"
-    reroute_gw      = "${var.reroute_gw}"
-    public_hostname = "${aws_eip.openvpn_eip.public_ip}"
+  vars = {
+    admin_user      = var.admin_user
+    admin_password  = var.admin_password
+    local_auth      = var.local_auth
+    reroute_dns     = var.reroute_dns
+    reroute_gw      = var.reroute_gw
+    public_hostname = aws_eip.openvpn_eip.public_ip
   }
 }
 
@@ -20,42 +20,44 @@ data "template_file" "openvpn_init" {
 # we use a duplicate resource and set one of them to "zero instances" in order to manage the lifecycle.
 
 locals {
-  // Currently Terraform has no other mechanism for lazy-evaluation of resources which might not exist. See:
-  //   https://github.com/hashicorp/terraform/issues/11566
-  //   https://github.com/hashicorp/terraform/issues/11574
-  openvpn_instance_id = "${join("", aws_instance.openvpn_instance_sandbox.*.id)}${join("", aws_instance.openvpn_instance.*.id)}"
-
-  ami_id             = "${var.ami_id}"
+  ami_id             = var.ami_id
   instance_type      = "t2.micro"
-  key_name           = "${var.key_name}"
-  subnet_id          = "${var.public_subnet_id}"
-  security_group_ids = ["${aws_security_group.openvpn.id}"]
-  user_data          = "${data.template_file.openvpn_init.rendered}"
+  key_name           = var.key_name
+  subnet_id          = var.public_subnet_id
+  security_group_ids = [aws_security_group.openvpn.id]
+  user_data          = data.template_file.openvpn_init.rendered
   name               = "OpenVPN"
-  workspace          = "${terraform.workspace}"
+  workspace          = terraform.workspace
 }
 
 resource "aws_instance" "openvpn_instance" {
-  count                  = "1"
-  ami                    = "${local.ami_id}"
-  instance_type          = "${local.instance_type}"
-  key_name               = "${local.key_name}"
-  subnet_id              = "${local.subnet_id}"
-  vpc_security_group_ids = ["${local.security_group_ids}"]
+  count         = "1"
+  ami           = local.ami_id
+  instance_type = local.instance_type
+  key_name      = local.key_name
+  subnet_id     = local.subnet_id
+  vpc_security_group_ids = local.security_group_ids
 
   lifecycle {
-    ignore_changes = ["key_name", "user_data", "ami"]
+    ignore_changes = [
+      key_name,
+      user_data,
+      ami,
+    ]
     prevent_destroy = true
   }
 
-  user_data = "${local.user_data}"
+  user_data = local.user_data
 
-  tags {
-    Name      = "${local.name}"
-    Workspace = "${local.workspace}"
+  tags = {
+    Name      = local.name
+    Workspace = local.workspace
   }
 
-  depends_on = ["aws_eip.openvpn_eip", "aws_security_group.openvpn"]
+  depends_on = [
+    aws_eip.openvpn_eip,
+    aws_security_group.openvpn,
+  ]
 }
 
 resource "aws_eip" "openvpn_eip" {
@@ -63,16 +65,16 @@ resource "aws_eip" "openvpn_eip" {
 }
 
 resource "aws_eip_association" "openvpn_eip_association" {
-  instance_id   = "${local.openvpn_instance_id}"
-  allocation_id = "${aws_eip.openvpn_eip.id}"
-  depends_on    = ["aws_eip.openvpn_eip"]
+  instance_id   = aws_instance.openvpn_instance.id
+  allocation_id = aws_eip.openvpn_eip.id
+  depends_on    = [aws_eip.openvpn_eip]
 }
 
 resource "aws_network_interface" "private_vpn_nic" {
-  subnet_id = "${var.private_subnet_id}"
+  subnet_id = var.private_subnet_id
 
   attachment {
-    instance     = "${local.openvpn_instance_id}"
+    instance     = aws_instance.openvpn_instance.id
     device_index = 1
   }
 }
@@ -80,7 +82,7 @@ resource "aws_network_interface" "private_vpn_nic" {
 resource "aws_security_group" "openvpn" {
   name        = "openvpn"
   description = "Allow the internet to get to the OpenVPN ports"
-  vpc_id      = "${var.vpc_id}"
+  vpc_id      = var.vpc_id
 
   ingress {
     from_port   = 443
@@ -110,3 +112,4 @@ resource "aws_security_group" "openvpn" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+

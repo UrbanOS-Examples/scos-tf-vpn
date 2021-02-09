@@ -5,7 +5,7 @@ variable "ami_id" {
 
 variable "sandbox" {
   description = "Behave as if we are running in sandbox (as opposed to prod)"
-  default = true
+  default     = true
 }
 
 variable "public_subnet_id" {
@@ -51,3 +51,4 @@ variable "ebs_volume_name" {
   description = "Block device to attach ebs data volume to"
   default     = "/dev/xvdb"
 }
+
