@@ -10,6 +10,6 @@ output "private_subnet_ip" {
 
 output "ec2_instance_id" {
   description = "EC2 Instance ID for the OpenVPN instance"
-  value       = local.openvpn_instance_id
+  value       = aws_instance.openvpn_instance.id
 }
 
