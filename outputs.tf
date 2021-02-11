@@ -5,7 +5,7 @@ output "elastic_ip" {
 
 output "private_subnet_ip" {
   description = "Private subnet IP address for the OpenVPN EC2 instance"
-  value       = aws_network_interface.private_vpn_nic.private_ips[0]
+  value       = aws_network_interface.private_vpn_nic.private_ip
 }
 
 output "ec2_instance_id" {
