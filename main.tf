@@ -31,7 +31,6 @@ locals {
 }
 
 resource "aws_instance" "openvpn_instance" {
-  count         = "1"
   ami           = local.ami_id
   instance_type = local.instance_type
   key_name      = local.key_name
