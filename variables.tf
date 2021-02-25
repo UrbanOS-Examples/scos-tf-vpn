@@ -1,11 +1,11 @@
 variable "ami_id" {
   description = "AMI Id for the instance. Defaults to OpenVPN Access Server 'Bring your own license' version."
-  default     = "ami-0a5aef046a3a6e7bf"
+  default     = "ami-04f63e8f7a845159a"
 }
 
 variable "sandbox" {
   description = "Behave as if we are running in sandbox (as opposed to prod)"
-  default = true
+  default     = true
 }
 
 variable "public_subnet_id" {
@@ -51,3 +51,4 @@ variable "ebs_volume_name" {
   description = "Block device to attach ebs data volume to"
   default     = "/dev/xvdb"
 }
+
